@@ -6,10 +6,7 @@ let books = {
   5: {
     'author': 'Unknown',
     'title': 'The Book Of Job',
-    'reviews': {
-      1: { message: 'foo' },
-      2: { message: 'bar' }
-    }
+    'reviews': {},
   },
   6: { 'author': 'Unknown', 'title': 'One Thousand and One Nights', 'reviews': {} },
   7: { 'author': 'Unknown', 'title': 'Nj\u00e1l\'s Saga', 'reviews': {} },
@@ -18,9 +15,7 @@ let books = {
   10: {
     'author': 'Samuel Beckett',
     'title': 'Molloy, Malone Dies, The Unnamable, the trilogy',
-    'reviews': {
-      1: { message: 'foo' }
-    }
+    'reviews': {}
   }
 };
 
