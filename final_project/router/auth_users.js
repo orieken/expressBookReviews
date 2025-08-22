@@ -25,7 +25,7 @@ regd_users.post('/login', (req, res) => {
   }
   let accessToken = jwt.sign(
     {
-      data: password
+      data: username
     },
     SECRET_KEY,
     { expiresIn: '1 Day' }
@@ -38,8 +38,35 @@ regd_users.post('/login', (req, res) => {
 
 // Add a book review
 regd_users.put('/auth/review/:isbn', (req, res) => {
-  //Write your code here
-  return res.status(300).json({ message: 'Yet to be implemented' });
+  const isbn = req.params.isbn;
+  const { review } = req.body;
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({ message: 'Authorization header missing or malformed' });
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  jwt.verify(token, SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+
+    const user = decoded.data;
+    console.log(user);
+
+    if (!books[isbn]) {
+      return res.status(404).json({ message: 'Book not found' });
+    }
+
+    if (!books[isbn].reviews) {
+      books[isbn].reviews = {};
+    }
+
+    books[isbn].reviews[user] = review;
+    return res.status(200).json({ message: 'Review added successfully' });
+  });
 });
 
 module.exports.authenticated = regd_users;
