@@ -3,6 +3,7 @@ let books = require('./booksdb.js');
 let isValid = require('./auth_users.js').isValid;
 let users = require('./auth_users.js').users;
 const public_users = express.Router();
+let axios = require('axios');
 
 
 public_users.post('/register', (req, res) => {
@@ -15,7 +16,7 @@ public_users.post('/register', (req, res) => {
   if (isValid(username)) {
     return res.status(400).json({ message: 'User already exists' });
   } else {
-    users.push( { username, password });
+    users.push({ username, password });
     return res.status(201).json({ message: 'User registered successfully' });
   }
 });
@@ -23,6 +24,24 @@ public_users.post('/register', (req, res) => {
 // Get the book list available in the shop
 public_users.get('/', function (req, res) {
   return res.send(JSON.stringify(books));
+});
+
+public_users.get('/books/async', async function (req, res) {
+  const url = `http://localhost:8000/`;
+  const response = await axios.get(url);
+  if (response.status !== 200) {
+    return res.status(500).json({ message: 'Error fetching book list' });
+  }
+  return res.send(JSON.stringify(response.data));
+});
+
+public_users.get('/books/promises', function (req, res) {
+  const url = `http://localhost:8000/`;
+  axios.get(url).then(response => {
+    res.send(JSON.stringify(response.data));
+  }).catch(error => {
+    res.send(500).json({ message: 'Error fetching book lists', error: error });
+  });
 });
 
 // Get book details based on ISBN
